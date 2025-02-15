@@ -17,7 +17,6 @@ class TaskManagerApp:
         self.show_welcome_screen()
         
 
-
     def load_icons(self):
         """Load icons from the 'App Icons' folder."""
         icon_names = [
@@ -76,7 +75,6 @@ class TaskManagerApp:
 
         start_button = ttk.Button(frame, text="Start", command=self.show_main_screen)
         start_button.grid(row=3, column=0, columnspan=3, pady=20)
-     
 
     def create_icon_frame(self, parent, icon_data, row, column):
         """Helper function to create an icon frame with label and description."""
@@ -100,7 +98,7 @@ class TaskManagerApp:
     def show_main_screen(self):
         self.clear_screen()
         self.create_sidebar()
-        self.create_task_list()
+        self.show_home_screen()
 
     def create_sidebar(self):
         sidebar = tk.Frame(self.root, width=100, bg='#d9d9d9')
@@ -109,7 +107,7 @@ class TaskManagerApp:
         # Define sidebar buttons with icons
         sidebar_buttons = [
             ("home", self.show_home_screen),
-            ("add_task", self.add_task),
+            ("add_task", self.show_add_task_screen),
             ("remove_task", self.remove_task),
             ("mark_as_complete", self.mark_task_completed),
             ("calendar", self.show_calendar),
@@ -150,10 +148,7 @@ class TaskManagerApp:
         self.task_listbox.pack(fill=tk.BOTH, expand=True)
 
     def show_home_screen(self):
-        self.clear_screen()
-        self.create_sidebar()
-
-        # Frame for the main content
+        self.clear_main_area()
         frame = tk.Frame(self.root, bg="#f4f4f4")
         frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -199,39 +194,37 @@ class TaskManagerApp:
         task_frame.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
-    def add_task(self, task_date=None, task_time=None):
-        # Create the Add Task dialog
-        add_task_dialog = tk.Toplevel(self.root)
-        add_task_dialog.title("Add Task")
-        add_task_dialog.geometry("400x250")
-        
-        task_name_label = tk.Label(add_task_dialog, text="Enter Task Name:")
+
+    def show_add_task_screen(self):
+        self.clear_main_area()
+        frame = tk.Frame(self.root, bg="#f4f4f4")
+        frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        task_name_label = tk.Label(frame, text="Enter Task Name:")
         task_name_label.pack(pady=10)
-        task_name_entry = tk.Entry(add_task_dialog)
+        task_name_entry = tk.Entry(frame)
         task_name_entry.pack(pady=10)
         
-        date_label = tk.Label(add_task_dialog, text="Select Task Date (YYYY-MM-DD):")
+        date_label = tk.Label(frame, text="Select Task Date (YYYY-MM-DD):")
         date_label.pack(pady=10)
         
         # Entry to show selected date
-        date_entry = tk.Entry(add_task_dialog)
-        if task_date:
-            date_entry.insert(0, task_date.strftime('%Y-%m-%d'))
-        else:
-            date_entry.insert(0, self.current_date.strftime('%Y-%m-%d'))
+        date_entry = tk.Entry(frame)
+        today = datetime.today().strftime('%Y-%m-%d')
+        date_entry.insert(0, today)
         date_entry.pack(pady=10)
-        
-        time_label = tk.Label(add_task_dialog, text="Enter Task Time (HH:MM):")
+
+        time_label = tk.Label(frame, text="Enter Task Time (HH:MM):")
         time_label.pack(pady=10)
-        time_entry = tk.Entry(add_task_dialog)
+        time_entry = tk.Entry(frame)
         time_entry.pack(pady=10)
 
-        frequency_label = tk.Label(add_task_dialog, text="Select Frequency:")
+        frequency_label = tk.Label(frame, text="Select Frequency:")
         frequency_label.pack(pady=10)
 
         # Frequency selection (Daily, Weekly, etc.)
         frequency_options = ["Once", "Daily", "Weekly"]
-        frequency_combobox = ttk.Combobox(add_task_dialog, values=frequency_options)
+        frequency_combobox = ttk.Combobox(frame, values=frequency_options)
         frequency_combobox.set("Once")
         frequency_combobox.pack(pady=10)
 
@@ -244,13 +237,18 @@ class TaskManagerApp:
             try:
                 task_datetime = datetime.strptime(f"{task_date} {task_time}", '%Y-%m-%d %H:%M')
                 self.tasks.append((task_datetime, task_name, task_frequency))
-                self.task_listbox.insert(tk.END, f"{task_datetime.strftime('%H:%M')} - {task_name} ({task_frequency})")
-                add_task_dialog.destroy()
+                self.show_home_screen()  # Return to home screen after saving
             except ValueError:
                 messagebox.showwarning("Invalid Input", "Please enter a valid date and time in the specified format.")
         
-        save_button = ttk.Button(add_task_dialog, text="Save Task", command=save_task)
+        save_button = ttk.Button(frame, text="Save Task", command=save_task)
         save_button.pack(pady=10)
+
+    def clear_main_area(self):
+        """Clear the main area to the right of the sidebar."""
+        for widget in self.root.winfo_children():
+            if isinstance(widget, tk.Frame) and widget.winfo_x() > 100:  # Assuming sidebar width is 100
+                widget.destroy()
 
     def remove_task(self):
         # Placeholder for remove task functionality
