@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from tkcalendar import Calendar
 from datetime import datetime, timedelta
+from PIL import Image, ImageTk  # For handling icons
 
 class TaskManagerApp:
     def __init__(self, root):
@@ -12,7 +13,28 @@ class TaskManagerApp:
         
         self.tasks = []  # Store tasks as a list of tuples (datetime, task_name, frequency)
         self.current_date = datetime.today().date()  # Track the current date
+        self.icons = self.load_icons()        # Load icons
         self.show_welcome_screen()
+        
+
+
+    def load_icons(self):
+        """Load icons from the 'App Icons' folder."""
+        icon_names = [
+            "add_task", "remove_task", "mark_as_complete",
+            "home", "settings", "history", "calendar"
+        ]
+        icons = {}
+        for name in icon_names:
+            try:
+                image = Image.open(f"App Icons/{name}.png")
+                # Use Image.Resampling.LANCZOS instead of Image.ANTIALIAS
+                image = image.resize((64, 64), Image.Resampling.LANCZOS)  # Resize icons
+                icons[name] = ImageTk.PhotoImage(image)
+            except Exception as e:
+                print(f"Error loading icon {name}: {e}")
+                icons[name] = None
+        return icons
 
     def show_welcome_screen(self):
         self.clear_screen()
@@ -22,28 +44,58 @@ class TaskManagerApp:
         welcome_label = tk.Label(frame, text="Welcome to Assistive Task Manager", font=("Arial", 20, "bold"), bg="#f4f4f4")
         welcome_label.pack(pady=20)
         
-        setup_button = ttk.Button(frame, text="Set Up", command=self.show_setup_screen)
+        setup_button = ttk.Button(frame, text="Set Up", command=self.show_instruction_screen)
         setup_button.pack(pady=10)
 
-    def show_setup_screen(self):
+    def show_instruction_screen(self):
         self.clear_screen()
         frame = tk.Frame(self.root, bg="#f4f4f4")
         frame.pack(expand=True)
-        
-        instructions = """
-        Instructions:
-        - Add Task: Add a new task manually.
-        - Remove Task: Remove a task manually.
-        - Mark Task as Completed: Mark a task as completed manually.
-        - Calendar: View and add tasks for specific dates.
-        - History: View completed, deleted, and overdue tasks.
-        - Settings: Configure Wi-Fi, view instructions, and other settings.
-        """
-        instructions_label = tk.Label(frame, text=instructions, justify=tk.LEFT, font=("Arial", 12), bg="#f4f4f4")
-        instructions_label.pack(pady=20)
-        
+
+        # Define icon names, labels, and descriptions
+        icon_info = [
+            ("home", "Home", "View today's tasks in hourly format."),
+            ("add_task", "Add Task", "Add a new task with date, time, and frequency."),
+            ("remove_task", "Remove Task", "Remove an existing task."),
+            ("mark_as_complete", "Mark as Complete", "Mark a task as completed."),
+            ("calendar", "Calendar", "View and add tasks for specific dates."),
+            ("history", "History", "View completed and overdue tasks."),
+            ("settings", "Settings", "Configure app settings.")
+        ]
+
+        # Home icon at the top row, centered
+        self.create_icon_frame(frame, icon_info[0], row=0, column=1)
+
+        # Middle row: Add Task, Remove Task, Mark as Complete
+        for i, icon_data in enumerate(icon_info[1:4], start=0):
+            self.create_icon_frame(frame, icon_data, row=1, column=i)
+
+        # Bottom row: Calendar, History, Settings
+        for i, icon_data in enumerate(icon_info[4:], start=0):
+            self.create_icon_frame(frame, icon_data, row=2, column=i)
+
         start_button = ttk.Button(frame, text="Start", command=self.show_main_screen)
-        start_button.pack(pady=10)
+        start_button.grid(row=3, column=0, columnspan=3, pady=20)
+     
+
+    def create_icon_frame(self, parent, icon_data, row, column):
+        """Helper function to create an icon frame with label and description."""
+        icon_name, label, description = icon_data
+        icon_frame = tk.Frame(parent, bg="#f4f4f4")
+        icon_frame.grid(row=row, column=column, padx=20, pady=20)
+
+        # Icon
+        if self.icons[icon_name]:
+            icon_label = tk.Label(icon_frame, image=self.icons[icon_name], bg="#f4f4f4")
+            icon_label.pack()
+
+        # Label
+        label_text = tk.Label(icon_frame, text=label, font=("Arial", 12, "bold"), bg="#f4f4f4")
+        label_text.pack()
+
+        # Description
+        desc_text = tk.Label(icon_frame, text=description, font=("Arial", 10), bg="#f4f4f4", wraplength=150)
+        desc_text.pack()
 
     def show_main_screen(self):
         self.clear_screen()
@@ -51,22 +103,45 @@ class TaskManagerApp:
         self.create_task_list()
 
     def create_sidebar(self):
-        sidebar = tk.Frame(self.root, width=200, bg='#d9d9d9')
+        sidebar = tk.Frame(self.root, width=100, bg='#d9d9d9')
         sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
-        buttons = [
-            ("Home", self.show_home_screen),
-            ("Add Task", self.add_task),
-            ("Remove Task", self.remove_task),
-            ("Mark Task as Completed", self.mark_task_completed),
-            ("Calendar", self.show_calendar),
-            ("History", self.show_history),
-            ("Settings", self.show_settings)
+        # Define sidebar buttons with icons
+        sidebar_buttons = [
+            ("home", self.show_home_screen),
+            ("add_task", self.add_task),
+            ("remove_task", self.remove_task),
+            ("mark_as_complete", self.mark_task_completed),
+            ("calendar", self.show_calendar),
+            ("history", self.show_history),
+            ("settings", self.show_settings)
         ]
-        
-        for text, command in buttons:
-            button = ttk.Button(sidebar, text=text, command=command)
-            button.pack(fill=tk.X, padx=10, pady=5)
+
+        # Home icon at the top
+        if self.icons["home"]:
+            home_button = tk.Button(sidebar, image=self.icons["home"], command=self.show_home_screen, bg="#d9d9d9", bd=0)
+            home_button.pack(fill=tk.X, padx=10, pady=10)
+
+        # Add a separator
+        separator = ttk.Separator(sidebar, orient="horizontal")
+        separator.pack(fill=tk.X, pady=10)
+
+        # Middle row: Add Task, Remove Task, Mark as Complete
+        for icon_name, command in sidebar_buttons[1:4]:
+            if self.icons[icon_name]:
+                button = tk.Button(sidebar, image=self.icons[icon_name], command=command, bg="#d9d9d9", bd=0)
+                button.pack(fill=tk.X, padx=10, pady=5)
+
+        # Add another separator
+        separator = ttk.Separator(sidebar, orient="horizontal")
+        separator.pack(fill=tk.X, pady=10)
+
+        # Bottom row: Calendar, History, Settings
+        for icon_name, command in sidebar_buttons[4:]:
+            if self.icons[icon_name]:
+                button = tk.Button(sidebar, image=self.icons[icon_name], command=command, bg="#d9d9d9", bd=0)
+                button.pack(fill=tk.X, padx=10, pady=5)
+
 
     def create_task_list(self):
         frame = tk.Frame(self.root, bg="#ffffff")
