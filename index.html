@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ManageMe - Senior Task Helper for managing tasks with reminders and calendar">
+    <title>ManageMe - Task Helper</title>
+
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body class="font-size-base"> <div id="welcomeScreen" class="welcome-screen hidden">
+        <h1>Welcome to ManageMe!</h1>
+        <p class="text-xl mb-8">Your Personal Task Assistant</p>
+        <input type="text" id="userNameInput" class="input-field text-center text-lg mb-8 w-4/5 max-w-md text-black" placeholder="Please enter your first name" autofocus>
+        <button id="saveUserNameBtn" class="action-btn btn-primary text-xl px-8 py-3">
+            Continue <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1 id="sidebarTitleHeader" class="sidebar-title">
+                <i class="fas fa-tasks logo-icon"></i>
+                <span class="nav-text">ManageMe</span>
+            </h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button id="todayNav" class="nav-item active">
+                <i class="fas fa-home"></i> <span class="nav-text">Today's Tasks</span>
+            </button>
+            <button id="addTaskNav" class="nav-item">
+                <i class="fas fa-plus-circle"></i> <span class="nav-text">Add New Task</span>
+            </button>
+            <button id="calendarNav" class="nav-item">
+                <i class="fas fa-calendar-alt"></i> <span class="nav-text">Calendar</span>
+            </button>
+            <button id="completedNav" class="nav-item">
+                <i class="fas fa-check-circle"></i> <span class="nav-text">Completed Tasks</span>
+            </button>
+            <button id="deletedNav" class="nav-item">
+                <i class="fas fa-trash-alt"></i> <span class="nav-text">Deleted Tasks</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer-nav">
+             <hr class="sidebar-divider">
+             <button id="settingsNav" class="nav-item">
+                 <i class="fas fa-cog"></i> <span class="nav-text">Settings</span>
+             </button>
+             <button id="helpNav" class="nav-item">
+                 <i class="fas fa-question-circle"></i> <span class="nav-text">Help & Tutorial</span>
+             </button>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="clock" id="sidebarClock">00:00:00</div>
+            <div class="date" id="sidebarDate">Date</div>
+        </div>
+    </aside>
+
+    <button id="mobileMenuButton" aria-label="Toggle Menu" class="mobile-menu-button">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <main class="main-content" id="mainContentArea">
+
+        <section id="todaySection" class="section-content">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-list mr-2.5"></i>
+                    <span id="greetingText">Today's Tasks</span>
+                </h2>
+                <div class="flex items-center gap-2">
+                     <button id="todaySortControl" class="action-btn btn-secondary text-sm">
+                         <i class="fas fa-clock mr-1"></i> Sort by Priority
+                     </button>
+                    <span id="taskCount" class="task-count-badge">0 tasks</span>
+                </div>
+            </div>
+            <ul id="taskList" class="task-list mt-4">
+                <li class="no-tasks-message">
+                    <i class="fas fa-coffee"></i>
+                    <p>No tasks scheduled for today.</p>
+                </li>
+            </ul>
+			<div id="upcomingTaskContainer" class="upcoming-task mb-6">
+				<div class="flex justify-between items-center mb-3">
+					<h3 class="text-lg font-semibold flex items-center"><i class="fas fa-hourglass-half mr-2"></i>Upcoming Tasks</h3>
+					<div id="upcomingTaskFilters" class="upcoming-task-filters">
+						<button data-filter="next7" class="action-btn btn-secondary text-xs px-2 py-1 active-filter-style">Next 7 Days</button>
+						<button data-filter="next30" class="action-btn btn-secondary text-xs px-2 py-1">Next 30 Days</button>
+						<button data-filter="next365" class="action-btn btn-secondary text-xs px-2 py-1">Next 365 Days</button>
+						<button data-filter="all" class="action-btn btn-secondary text-xs px-2 py-1">Show All</button>
+					</div>
+				</div>
+				<div id="upcomingTaskContent" class="task-list space-y-2">
+					<p class="no-tasks-message text-sm">No upcoming tasks</p>
+				</div>
+				<div class="text-center mt-3">
+					<button id="upcomingExpandBtn" class="action-btn btn-secondary text-sm hidden">
+						<i class="fas fa-chevron-down mr-1"></i> Show More
+					</button>
+				</div>
+			</div>
+        </section>
+
+		<section id="addTaskSection" class="section-content hidden">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-plus-circle mr-2.5"></i> Add New Task
+                </h2>
+            </div>
+            <div class="form-container">
+                <div>
+                    <label for="taskInput">Task Description</label>
+                    <div class="input-group">
+                        <input id="taskInput" type="text" placeholder="Type or tap mic..." class="input-field" maxlength="150">
+                        <button id="sttBtnDescription" class="input-group-button action-btn btn-icon btn-secondary" aria-label="Input Task Description via Voice">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <div id="sttStatusDescription" class="form-help-text text-xs text-right stt-status-indicator">Tap mic to speak</div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label for="dueDate">Due Date & Time</label>
+                        <div class="input-group">
+                            <input id="dueDate" type="text" readonly class="input-field" placeholder="Tap calendar or mic">
+                            <button id="openDatePickerBtn" aria-label="Open Date Picker" class="input-group-button action-btn btn-icon btn-secondary">
+                                <i class="fas fa-calendar-alt"></i>
+                            </button>
+                             <button id="sttBtnDateTime" class="input-group-button action-btn btn-icon btn-secondary" aria-label="Input Date and Time via Voice">
+                                 <i class="fas fa-microphone"></i>
+                             </button>
+                        </div>
+                        <div class="input-group mt-2">
+                             <input id="dueTime" type="text" readonly class="input-field" placeholder="Tap clock or mic">
+                             <button id="openTimePickerBtn" aria-label="Open Time Picker" class="input-group-button action-btn btn-icon btn-secondary">
+                                 <i class="fas fa-clock"></i>
+                             </button>
+                        </div>
+                         <div id="sttStatusDateTime" class="form-help-text text-xs text-right stt-status-indicator mt-1">Tap mic for date/time</div>
+                    </div>
+
+                    <div>
+                        <label for="taskPriority">Priority</label>
+                        <select id="taskPriority" class="input-field select-field">
+                            <option value="priority-low">Low</option>
+                            <option value="priority-medium" selected>Medium</option>
+                            <option value="priority-high">High</option>
+                        </select>
+                    </div>
+
+                     <div id="repeatContainer">
+                        <label for="repeatFrequency">Repeat</label>
+                         <div class="input-group">
+                             <select id="repeatFrequency" class="input-field select-field">
+                                 <option value="none">No Repeat</option>
+                                 <option value="daily">Daily</option>
+                                 <option value="weekly">Weekly (same day)</option>
+                                 <option value="weekdays">Weekdays (Mon-Fri)</option>
+                                 <option value="weekends">Weekends (Sat-Sun)</option>
+                                 <option value="monthly">Monthly (same date)</option>
+                                 <option value="yearly">Yearly (same date)</option>
+                                 <option value="custom">Custom Days</option>
+                             </select>
+                             <button id="sttBtnFrequency" class="input-group-button action-btn btn-icon btn-secondary" aria-label="Input Repeat Frequency via Voice">
+                                <i class="fas fa-microphone"></i>
+                             </button>
+                         </div>
+                        <div id="sttStatusFrequency" class="form-help-text text-xs text-right stt-status-indicator mt-1">Tap mic for frequency</div>
+                    </div>
+                </div>
+
+                <div id="customRepeatOptions" class="hidden">
+                    <p class="form-label-secondary">Select days to repeat:</p>
+                    <div class="repeat-options">
+                        <div id="repeatDay0" class="repeat-day" data-day="0">S</div>
+                        <div id="repeatDay1" class="repeat-day" data-day="1">M</div>
+                        <div id="repeatDay2" class="repeat-day" data-day="2">T</div>
+                        <div id="repeatDay3" class="repeat-day" data-day="3">W</div>
+                        <div id="repeatDay4" class="repeat-day" data-day="4">T</div>
+                        <div id="repeatDay5" class="repeat-day" data-day="5">F</div>
+                        <div id="repeatDay6" class="repeat-day" data-day="6">S</div>
+                    </div>
+                </div>
+                 <div id="repeatUntilContainer" class="hidden">
+                     <label for="repeatUntilSelect">Repeat Until</label>
+                     <div class="form-grid">
+                         <select id="repeatUntilSelect" class="input-field select-field">
+                             <option value="never">Never</option>
+                             <option value="1month">1 Month Later</option>
+                             <option value="6months">6 Months Later</option>
+                             <option value="1year" selected>1 Year Later</option>
+                             <option value="10years">10 Years Later</option>
+                             <option value="custom">Custom Date</option>
+                         </select>
+                         <input id="repeatUntilDate" type="text" class="input-field" readonly placeholder="Select date or option">
+                     </div>
+                 </div>
+                <button id="addTaskBtn" class="action-btn btn-success w-full font-semibold">
+                    <i class="fas fa-plus mr-2"></i> Add Task
+                </button>
+            </div>
+        </section>
+
+        <section id="calendarSection" class="section-content hidden">
+             <div class="calendar-header">
+                 <div class="flex items-center">
+                     <button id="calendarBackBtn" aria-label="Back to Calendar View" class="action-btn btn-icon btn-secondary mr-3 hidden">
+                         <i class="fas fa-arrow-left"></i>
+                     </button>
+                     <h2 class="section-title">
+                         <i class="fas fa-calendar-alt mr-3"></i> <span id="calendarTitle">Calendar</span>
+                     </h2>
+                 </div>
+                 <div class="flex items-center gap-4">
+                     <button id="returnToTodayBtn" class="action-btn btn-secondary text-sm">Return to Today</button>
+                     <div id="calendarNav" class="calendar-nav">
+                         <button id="prevMonthBtn" aria-label="Previous Month" class="action-btn btn-icon btn-secondary">
+                             <i class="fas fa-chevron-left"></i>
+                         </button>
+                         <span id="calendarMonthYear" class="calendar-month-year">Month</span>
+                         <button id="nextMonthBtn" aria-label="Next Month" class="action-btn btn-icon btn-secondary">
+                             <i class="fas fa-chevron-right"></i>
+                         </button>
+                     </div>
+                     <div id="calendarYearNav" class="calendar-nav">
+                          <button id="prevYearBtn" aria-label="Previous Year" class="action-btn btn-icon btn-secondary">
+                              <i class="fas fa-angle-double-left"></i>
+                          </button>
+                          <span id="calendarYearDisplay" class="calendar-month-year w-20">Year</span> <button id="nextYearBtn" aria-label="Next Year" class="action-btn btn-icon btn-secondary">
+                              <i class="fas fa-angle-double-right"></i>
+                          </button>
+                     </div>
+                 </div>
+             </div>
+             <div id="dayViewNav" class="calendar-nav justify-center mb-4 hidden">
+                  <button id="prevDayBtn" aria-label="Previous Day" class="action-btn btn-icon btn-secondary">
+                      <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <span id="dayViewDateDisplay" class="calendar-month-year mx-4">Full Date</span>
+                  <button id="nextDayBtn" aria-label="Next Day" class="action-btn btn-icon btn-secondary">
+                      <i class="fas fa-chevron-right"></i>
+                  </button>
+             </div>
+             <div class="calendar-grid-header">
+                <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div> <div>Fri</div> <div>Sat</div>
+            </div>
+            <div id="calendar" class="calendar-grid">
+                 <div class="col-span-7 loading-text"><i class="fas fa-spinner fa-spin mr-2"></i>Loading Calendar...</div>
+            </div>
+            <div id="dayView" class="hidden mt-6 w-full">
+                <div class="section-header">
+                    <h3 class="section-title" id="dayViewTitle">Date</h3>
+                    <div class="flex gap-2">
+                        <button id="freeUpScheduleBtn" class="action-btn btn-info text-base">
+                            <i class="fas fa-calendar-check mr-2"></i> Free Up Schedule
+                        </button>
+                        <button id="addTaskForDayBtn" class="action-btn btn-success text-base">
+                            <i class="fas fa-plus mr-2"></i> Add Task for Day
+                        </button>
+                    </div>
+                </div>
+                <ul id="dayViewTaskList" class="task-list mt-4"></ul>
+            </div>
+        </section>
+
+        <section id="completedSection" class="section-content hidden">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-check-circle mr-3 text-green-500"></i> Completed Tasks
+                </h2>
+                 <div class="flex items-center gap-2">
+                     <div id="completedFilters" class="flex gap-1">
+                         <button data-filter="last7" class="action-btn btn-secondary text-xs px-2 py-1 active-filter-style">Last 7 Days</button>
+                         <button data-filter="last30" class="action-btn btn-secondary text-xs px-2 py-1">Last 30 Days</button>
+                         <button data-filter="last365" class="action-btn btn-secondary text-xs px-2 py-1">Last 365 Days</button>
+                         <button data-filter="all" class="action-btn btn-secondary text-xs px-2 py-1">Show All</button>
+                     </div>
+                     <button id="deleteAllCompletedBtn" class="action-btn btn-danger text-xs px-2 py-1">
+                         <i class="fas fa-trash-alt mr-1"></i> Delete All
+                     </button>
+                 </div>
+            </div>
+            <ul id="completedList" class="task-list mt-4">
+                <li class="loading-text"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</li>
+            </ul>
+        </section>
+
+        <section id="deletedSection" class="section-content hidden">
+             <div class="section-header">
+                 <h2 class="section-title">
+                     <i class="fas fa-trash-alt mr-3 text-orange-500"></i> Deleted Tasks
+                 </h2>
+                  <div class="flex items-center gap-2">
+                      <button id="restoreAllBtn" class="action-btn btn-info text-xs px-2 py-1 hidden">
+                          <i class="fas fa-trash-restore mr-1"></i> Restore All
+                      </button>
+                      <button id="deleteAllPermanentlyBtn" class="action-btn btn-danger text-xs px-2 py-1 hidden">
+                          <i class="fas fa-times mr-1"></i> Delete All Permanently
+                      </button>
+                  </div>
+             </div>
+            <ul id="deletedList" class="task-list mt-4">
+                <li class="loading-text"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <div id="modalsContainer">
+
+        <div id="datePickerModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Select Date</h2>
+                <div class="calendar-nav mb-4"> <button id="prevPickerMonthBtn" aria-label="Previous Month" class="action-btn btn-icon btn-secondary"><i class="fas fa-chevron-left"></i></button>
+                    <span id="pickerMonthYear" class="calendar-month-year">Month Year</span>
+                    <button id="nextPickerMonthBtn" aria-label="Next Month" class="action-btn btn-icon btn-secondary"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid-header">
+                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                </div>
+                <div id="pickerCalendar" class="calendar-grid picker-grid"></div>
+                <div class="modal-actions">
+                     <button id="cancelDatePickerBtn" class="action-btn btn-secondary w-full">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="timePickerModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Select Time</h2>
+                <div class="time-picker">
+                    <div class="time-display" id="timeDisplay">12:00 PM</div>
+                    <div class="time-controls">
+                        <div class="time-control-group">
+                            <button id="increaseHourBtn" aria-label="Increase Hour" class="time-btn"><i class="fas fa-chevron-up"></i></button>
+                            <span class="time-label">Hour</span>
+                            <button id="decreaseHourBtn" aria-label="Decrease Hour" class="time-btn"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                        <div class="time-control-group">
+                            <button id="increaseMinuteBtn" aria-label="Increase Minute" class="time-btn"><i class="fas fa-chevron-up"></i></button>
+                            <span class="time-label">Minute</span>
+                            <button id="decreaseMinuteBtn" aria-label="Decrease Minute" class="time-btn"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                        <div class="time-control-group">
+                             <button id="toggleAmPmBtn" aria-label="Toggle AM/PM" class="time-btn"><span id="amPmDisplay" class="time-period">PM</span></button>
+                             <span class="time-label">Period</span>
+                             </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="saveTimeBtn" class="action-btn btn-success flex-1">Set Time</button>
+                        <button id="cancelTimePickerBtn" class="action-btn btn-secondary flex-1">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="taskDueAlert" class="modal">
+            <div class="modal-content modal-alert">
+                <div class="alert-icon">⏰</div>
+                <h2 class="modal-title" id="dueTitle">Task Due!</h2>
+                <div id="dueAlertTaskList" class="task-list max-h-60 overflow-y-auto mb-6 space-y-3">
+                    </div>
+                <div class="modal-actions justify-between">
+                     <button id="closeAlertBtn" class="action-btn btn-secondary">Close</button>
+                     <button id="completeAllDueBtn" class="action-btn btn-success hidden">
+                         <i class="fas fa-check-double mr-2"></i> Complete All
+                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteConfirmModal" class="modal">
+            <div class="modal-content modal-confirm">
+                <h2 class="modal-title">Confirm Delete</h2>
+                <p class="confirm-text" id="deleteTaskText"></p>
+                <div class="modal-actions">
+                    <button id="confirmDeleteBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt mr-2"></i> Delete</button>
+                    <button id="cancelDeleteBtn" class="action-btn btn-secondary"><i class="fas fa-times mr-2"></i> Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div id="restoreConfirmModal" class="modal">
+             <div class="modal-content modal-confirm">
+                 <h2 class="modal-title">Confirm Restore</h2>
+                 <p class="confirm-text" id="restoreTaskText"></p>
+                 <div class="modal-actions">
+                     <button id="confirmRestoreBtn" class="action-btn btn-success"><i class="fas fa-trash-restore mr-2"></i> Restore</button>
+                     <button id="cancelRestoreBtn" class="action-btn btn-secondary"><i class="fas fa-times mr-2"></i> Cancel</button>
+                 </div>
+             </div>
+        </div>
+        <div id="permanentDeleteModal" class="modal">
+            <div class="modal-content modal-confirm">
+                <h2 class="modal-title">Permanently Delete Task</h2>
+                <p class="confirm-text" id="permanentDeleteTaskText"></p>
+                <div class="modal-actions">
+                    <button id="confirmPermanentDeleteBtn" class="action-btn btn-danger"><i class="fas fa-exclamation-triangle mr-2"></i> Delete Permanently</button>
+                    <button id="cancelPermanentDeleteBtn" class="action-btn btn-secondary"><i class="fas fa-times mr-2"></i> Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="completeRecurringConfirmModal" class="modal">
+             <div class="modal-content modal-confirm">
+                 <h2 class="modal-title">Complete Recurring Task</h2>
+                 <p class="confirm-text" id="completeRecurringText"></p>
+                 <div class="modal-actions flex-col gap-3"> <button id="confirmCompleteSingleBtn" class="action-btn btn-success w-full"><i class="fas fa-check mr-2"></i> Complete This Instance Only</button>
+                     <button id="confirmCompleteSeriesBtn" class="action-btn btn-warning w-full"><i class="fas fa-check-double mr-2"></i> Complete Entire Series</button>
+                     <button id="cancelCompleteRecurringBtn" class="action-btn btn-secondary w-full mt-2"><i class="fas fa-times mr-2"></i> Cancel</button>
+                 </div>
+             </div>
+         </div>
+
+         <div id="deleteAllCompletedConfirmModal" class="modal">
+             <div class="modal-content modal-confirm">
+                 <h2 class="modal-title">Delete All Completed Tasks?</h2>
+                 <p class="confirm-text">Are you sure you want to move all completed tasks to the Deleted list?</p>
+                 <div class="modal-actions">
+                     <button id="confirmDeleteAllCompletedBtn" class="action-btn btn-danger" disabled>Delete All (3s)</button>
+                     <button id="cancelDeleteAllCompletedBtn" class="action-btn btn-secondary">Cancel</button>
+                 </div>
+             </div>
+         </div>
+         <div id="restoreAllConfirmModal" class="modal">
+             <div class="modal-content modal-confirm">
+                 <h2 class="modal-title">Restore All Deleted Tasks?</h2>
+                 <p class="confirm-text">Are you sure you want to restore all tasks from the Deleted list?</p>
+                 <div class="modal-actions">
+                     <button id="confirmRestoreAllBtn" class="action-btn btn-success">Restore All</button>
+                     <button id="cancelRestoreAllBtn" class="action-btn btn-secondary">Cancel</button>
+                 </div>
+             </div>
+         </div>
+         <div id="deleteAllPermanentlyConfirmModal" class="modal">
+             <div class="modal-content modal-confirm">
+                 <h2 class="modal-title">Delete All Permanently?</h2>
+                 <p class="confirm-text">Are you sure you want to permanently delete all tasks in the Deleted list? This cannot be undone.</p>
+                 <div class="modal-actions">
+                     <button id="confirmDeleteAllPermanentlyBtn" class="action-btn btn-danger">Delete Permanently</button>
+                     <button id="cancelDeleteAllPermanentlyBtn" class="action-btn btn-secondary">Cancel</button>
+                 </div>
+             </div>
+         </div>
+
+        <div id="settingsModal" class="modal settings-modal">
+            <div class="modal-content">
+                <h2 class="modal-title mb-6">Settings</h2>
+                 <div id="settingsAppearanceOptions" class="settings-option">
+                    <h3><i class="fas fa-paint-brush mr-2 opacity-75"></i>Appearance</h3>
+                    <div class="settings-control">
+                        <label for="settingFontSize">Font Size</label>
+                        <select id="settingFontSize" class="input-field select-field">
+                            <option value="sm">Small</option>
+                            <option value="base">Medium</option>
+                            <option value="lg">Large</option>
+                            <option value="xl">Extra Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-control">
+                        <label>Color Theme</label>
+                        <div id="colorThemeSelector" class="color-theme-selector">
+                             <button data-theme="green" data-theme-color="#68a67d" class="color-theme-button bg-[#68a67d]" aria-label="Green Theme"></button>
+                             <button data-theme="blue" data-theme-color="#3b82f6" class="color-theme-button bg-blue-500" aria-label="Blue Theme"></button>
+                             <button data-theme="purple" data-theme-color="#8b5cf6" class="color-theme-button bg-purple-500" aria-label="Purple Theme"></button>
+                             <button data-theme="red" data-theme-color="#ef4444" class="color-theme-button bg-red-500" aria-label="Red Theme"></button>
+                        </div>
+                    </div>
+                    <div class="settings-control">
+                        <label for="settingContrast">Display Mode</label>
+                        <select id="settingContrast" class="input-field select-field">
+                            <option value="default">Default (Light)</option>
+                            <option value="high-contrast">High Contrast</option>
+                            <option value="dark-mode">Dark Mode</option>
+                        </select>
+                    </div>
+                     <div class="settings-control">
+                         <label for="settingTimeFormat">Time Format</label>
+                         <select id="settingTimeFormat" class="input-field select-field">
+                             <option value="12hr">12 Hour (e.g., 3:00 PM)</option>
+                             <option value="24hr">24 Hour (e.g., 15:00)</option>
+                         </select>
+                     </div>
+                     <div class="settings-control">
+                         <label for="settingDateFormat">Date Format</label>
+                         <select id="settingDateFormat" class="input-field select-field">
+                             <option value="DDMMYYYY">DD/MM/YYYY</option>
+                             <option value="MMDDYYYY">MM/DD/YYYY</option>
+                         </select>
+                     </div>
+                </div>
+                <div class="settings-option">
+                    <h3><i class="fas fa-language mr-2 opacity-75"></i>Language</h3>
+                    <div class="settings-control">
+                        <select class="input-field select-field" disabled> <option>English</option> </select>
+                        <p class="form-help-text">Language selection not yet available.</p>
+                    </div>
+                </div>
+                 <div class="settings-option">
+                     <h3><i class="fas fa-wifi mr-2 opacity-75"></i>Connectivity</h3>
+                     <p class="form-help-text">Wi-Fi and Bluetooth are managed by the device's operating system.</p>
+                </div>
+                 <div class="settings-option">
+                     <h3><i class="fas fa-info-circle mr-2 opacity-75"></i>Instructions</h3>
+                     <p class="form-help-text">Use sidebar to navigate. Add tasks manually. Use task buttons (<i class="fas fa-check text-green-500"></i>/<i class="fas fa-clock text-yellow-500"></i>/<i class="fas fa-trash-alt text-red-500"></i>) to manage tasks. Restore/delete past tasks in the Deleted section.</p>
+                </div>
+                <div class="modal-actions mt-8">
+                    <button id="saveSettingsBtn" class="action-btn btn-success w-full">Save & Close</button>
+                     <button id="settingsDoneButton" class="action-btn btn-success w-full hidden">Done Setup</button>
+                </div>
+            </div>
+        </div>
+
+         <div id="customAlertModal" class="modal">
+             <div class="modal-content modal-alert-custom"> <h2 class="modal-title" id="customAlertTitle">Alert</h2>
+                 <p class="confirm-text" id="customAlertMessage"></p>
+                 <div class="modal-actions">
+                     <button id="customAlertCloseBtn" class="action-btn btn-primary">OK</button>
+                 </div>
+             </div>
+         </div>
+
+    </div><div id="walkthroughOverlay" class="walkthrough-overlay"></div>
+    <div id="walkthroughTooltip" class="walkthrough-tooltip hidden">
+         <button id="closeWalkthroughBtn" aria-label="Close Walkthrough" class="walkthrough-close-btn">
+             <i class="fas fa-times"></i>
+         </button>
+        <h3 class="walkthrough-title" id="walkthroughTitle"></h3>
+        <p class="walkthrough-content" id="walkthroughContent"></p>
+        <div class="walkthrough-nav">
+            <button id="walkthroughPrevBtn" class="action-btn btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i> Previous
+            </button>
+            <button id="walkthroughNextBtn" class="action-btn btn-success">
+                Next <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+	<script src="stt.js"></script>
+
+</body>
+</html>

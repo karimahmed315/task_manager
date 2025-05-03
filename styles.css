@@ -1,0 +1,1108 @@
+/* styles.css */
+
+/*-------------------------------------------------------------------*/
+/* 1. CSS Variables & Base Setup
+/*-------------------------------------------------------------------*/
+:root {
+    /* Color Palette (Default: Green Theme - Light Mode) */
+    --primary-color: #68a67d;           /* Custom Warm Green */
+    --primary-color-darker: #5a916d;
+    --primary-text-color: #ffffff;      /* White text on primary */
+    --rgb-primary-color: 104, 166, 125; /* For RGBA usage */
+
+    --bg-color: #f8fafc;                /* Slate 50 */
+    --card-bg-color: #ffffff;           /* White */
+    --text-color: #111827;              /* Gray 900 */
+    --text-muted-color: #6b7280;        /* Gray 500 */
+    --border-color: #e5e7eb;            /* Gray 200 */
+    --input-border-color: #d1d5db;      /* Gray 300 */
+    --input-focus-ring-color: var(--primary-color);
+    --divider-color: #e5e7eb;           /* Gray 200 */
+
+    --modal-bg-overlay: rgba(0, 0, 0, 0.6);
+    --modal-content-bg: #ffffff;
+    --modal-content-text: #111827;
+
+    /* Priority Colors */
+    --priority-high: #ef4444;           /* Red-500 */
+    --priority-medium: #f59e0b;          /* Amber-500 */
+    --priority-low: #10b981;            /* Emerald-500 */
+
+    /* Calendar Colors */
+    --calendar-hover-bg: #f1f5f9;       /* Slate 100 */
+    --calendar-has-tasks-bg: rgba(var(--rgb-primary-color), 0.15); /* Primary tint */
+    --calendar-today-bg: var(--primary-color);
+    --calendar-today-text: var(--primary-text-color);
+
+    /* Layout */
+    --sidebar-width: 90px;
+    --sidebar-expanded-width: 260px;
+    --content-padding: 2rem;
+    --mobile-content-padding: 1rem;
+
+    /* Transitions */
+    --transition-speed: 0.2s;
+    --transition-func: ease-in-out;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --card-shadow: var(--shadow-md); /* Default card shadow */
+}
+
+/*-------------------------------------------------------------------*/
+/* 2. Theme Modes (Dark & High Contrast)
+/*-------------------------------------------------------------------*/
+
+/* --- Dark Mode --- */
+body.dark-mode {
+    --bg-color: #111827;                /* Gray 900 */
+    --card-bg-color: #1f2937;           /* Gray 800 */
+    --text-color: #f3f4f6;              /* Gray 100 */
+    --text-muted-color: #9ca3af;        /* Gray 400 */
+    --border-color: #374151;            /* Gray 700 */
+    --input-border-color: #4b5563;      /* Gray 600 */
+    --divider-color: #374151;           /* Gray 700 */
+    --modal-bg-overlay: rgba(0, 0, 0, 0.8);
+    --modal-content-bg: #1f2937;
+    --modal-content-text: #f3f4f6;
+    --card-shadow: 0 4px 8px 0 rgb(0 0 0 / 0.3); /* Darker shadow */
+
+    /* Theme color adjustments */
+    --primary-color: #34d399;           /* Emerald 400 */
+    --primary-color-darker: #10b981;    /* Emerald 500 */
+    --rgb-primary-color: 52, 211, 153;
+    --primary-text-color: #111827;      /* Dark text on bright primary */
+
+    /* Calendar */
+    --calendar-hover-bg: #374151;       /* Gray 700 */
+    --calendar-has-tasks-bg: rgba(var(--rgb-primary-color), 0.2);
+    --calendar-today-bg: var(--primary-color);
+    --calendar-today-text: #111827;
+}
+
+/* --- High Contrast Mode --- */
+body.high-contrast {
+    --bg-color: #ffffff;
+    --card-bg-color: #ffffff;
+    --text-color: #000000;
+    --text-muted-color: #000000;
+    --border-color: #000000;
+    --input-border-color: #000000;
+    --divider-color: #000000;
+    --modal-bg-overlay: rgba(0, 0, 0, 0.7);
+    --modal-content-bg: #ffffff;
+    --modal-content-text: #000000;
+    --card-shadow: 0 0 0 2px #000000; /* Use border */
+
+    /* Theme color adjustments */
+    --primary-color: #0000ff;           /* Bright Blue */
+    --primary-color-darker: #0000cc;
+    --rgb-primary-color: 0, 0, 255;
+    --primary-text-color: #ffffff;      /* White text on blue */
+
+    /* Calendar */
+    --calendar-hover-bg: #dddddd;
+    --calendar-has-tasks-bg: #ffff00;   /* Yellow */
+    --calendar-today-bg: #000000;       /* Black */
+    --calendar-today-text: #ffffff;     /* White */
+}
+
+/*-------------------------------------------------------------------*/
+/* 3. Base & Typography Styles
+/*-------------------------------------------------------------------*/
+*, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+body {
+    margin: 0;
+    line-height: inherit;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed) var(--transition-func),
+                color var(--transition-speed) var(--transition-func);
+    margin-right: var(--sidebar-width); /* Default for large screens */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on touch devices */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Font Size Classes */
+body.font-size-sm { font-size: 0.875rem; /* 14px */ }
+body.font-size-base { font-size: 1rem; /* 16px */ }
+body.font-size-lg { font-size: 1.125rem; /* 18px */ }
+body.font-size-xl { font-size: 1.25rem; /* 20px */ }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600; /* semibold */
+    line-height: 1.3;
+    color: inherit; /* Inherit from body */
+}
+
+h1 { font-size: 2.25em; /* ~36px */ margin-bottom: 1.5rem; }
+h2 { font-size: 1.875em; /* ~30px */ margin-bottom: 1.25rem; }
+h3 { font-size: 1.5em; /* ~24px */ margin-bottom: 1rem; }
+h4 { font-size: 1.25em; /* ~20px */ margin-bottom: 0.75rem; }
+
+p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed) var(--transition-func);
+}
+a:hover {
+    text-decoration: underline;
+    filter: brightness(1.1);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--divider-color);
+    margin: 1.5rem 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important; /* Use !important to ensure override if necessary */
+}
+
+/*-------------------------------------------------------------------*/
+/* 4. Layout Styles (Sidebar, Main Content)
+/*-------------------------------------------------------------------*/
+.sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll within sidebar */
+    z-index: 1040; /* High z-index */
+    transition: transform 0.3s ease, width 0.3s ease;
+    transform: translateX(0); /* Remove initial translateX(100%) */
+    display: flex;
+    flex-direction: column;
+    box-shadow: -2px 0 12px rgba(0,0,0,0.15);
+    border-left: 1px solid var(--primary-sidebar-border, transparent);
+}
+
+.sidebar.expanded {
+    width: var(--sidebar-expanded-width);
+}
+
+.sidebar-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--primary-sidebar-border, rgba(255,255,255,0.2));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5rem; /* Fixed height */
+}
+
+.sidebar-title {
+    font-size: 1.5em; /* Larger title */
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--primary-text-color);
+}
+
+.logo-icon {
+    font-size: 1.5em; /* Larger icon */
+    flex-shrink: 0;
+}
+
+.nav-text {
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.sidebar.expanded .nav-text {
+    display: inline;
+    opacity: 1;
+    transition-delay: 0.1s; /* Delay fade in */
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.nav-item {
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1em; /* Larger nav items */
+    font-weight: 500;
+    transition: all var(--transition-speed) var(--transition-func);
+    border-left: 5px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    color: var(--primary-sidebar-text, rgba(255,255,255,0.85));
+    cursor: pointer;
+    width: 100%; /* Ensure button takes full width */
+    text-align: left; /* Align text left */
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+}
+
+.nav-item i {
+    width: 1.75em; /* Consistent icon width */
+    text-align: center;
+    font-size: 1.3em; /* Larger icons */
+    flex-shrink: 0;
+    color: var(--primary-text-color); /* Ensure icon color matches */
+    opacity: 0.9;
+}
+
+.nav-item:hover {
+    background-color: var(--primary-hover-bg, rgba(255, 255, 255, 0.1));
+    color: var(--primary-text-color);
+}
+.nav-item:hover i {
+    opacity: 1;
+}
+
+.nav-item.active {
+    background-color: var(--primary-active-bg, rgba(0, 0, 0, 0.15));
+    border-left-color: var(--primary-border-color, #ffffff);
+    color: var(--primary-text-color);
+    font-weight: 600;
+}
+.nav-item.active i {
+    opacity: 1;
+}
+
+.sidebar-footer-nav {
+    margin-top: auto; /* Pushes this block to the bottom */
+    padding-top: 0.5rem;
+    flex-shrink: 0;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid var(--primary-sidebar-border, rgba(255,255,255,0.2));
+    margin: 1rem 1.25rem;
+}
+
+.sidebar-footer {
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid var(--primary-sidebar-border, rgba(255,255,255,0.2));
+    color: var(--primary-sidebar-text, rgba(255,255,255,0.85));
+    flex-shrink: 0;
+}
+
+.sidebar-footer .clock {
+    font-size: 1.1em; /* Larger clock */
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.sidebar-footer .date {
+    font-size: 0.85em;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+.mobile-menu-button {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.5rem; /* rounded-lg */
+    z-index: 1050; /* Above sidebar */
+    display: none; /* Hidden by default, shown via media query */
+    box-shadow: var(--shadow-lg);
+    border: none;
+    cursor: pointer;
+}
+.mobile-menu-button i {
+    font-size: 1.25rem; /* text-xl */
+    display: block; /* Prevent extra space */
+}
+
+.main-content {
+    padding: var(--content-padding);
+    max-width: 1200px;
+    margin: 0 auto; /* Center the content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: margin-right var(--transition-speed) var(--transition-func);
+    width: 100%; /* Ensure main content takes available width */
+}
+
+.section-content {
+    width: 100%; /* Make section take full width of parent */
+    max-width: 900px; /* Limit max width for readability */
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    border-radius: 0.875rem; /* More rounded */
+    box-shadow: var(--card-shadow);
+    padding: 2rem; /* More padding */
+    margin-bottom: 2rem;
+    transition: opacity var(--transition-speed) var(--transition-func), transform var(--transition-speed) var(--transition-func);
+    opacity: 1;
+    border: 1px solid var(--border-color); /* Add subtle border */
+    overflow: hidden; /* Prevent content from spilling out */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem; /* More space below header */
+    padding-bottom: 1rem; /* Space above border */
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.section-title {
+    font-size: 1.75em; /* Larger section titles */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-color);
+    margin-bottom: 0; /* Remove default margin */
+}
+.section-title i {
+    color: var(--primary-color);
+}
+
+.task-count-badge {
+    background-color: rgba(var(--rgb-primary-color), 0.1);
+    color: var(--primary-color);
+    padding: 0.35rem 0.85rem; /* Adjusted padding */
+    border-radius: 9999px; /* pill shape */
+    font-size: 0.9em; /* Slightly smaller */
+    font-weight: 600;
+}
+
+/*-------------------------------------------------------------------*/
+/* 5. Components (Buttons, Inputs, Lists, Calendar, Modals etc.)
+/*-------------------------------------------------------------------*/
+
+/* --- Buttons --- */
+.action-btn {
+    min-height: 48px; /* Consistent height */
+    padding: 0.65rem 1.25rem;
+    font-size: 1em; /* Relative to body font size */
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all var(--transition-speed) var(--transition-func);
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+}
+.action-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+.action-btn:active {
+    filter: brightness(0.95);
+    transform: translateY(0px);
+    box-shadow: var(--shadow-sm);
+}
+.action-btn i {
+    margin-right: 0.5em;
+    font-size: 1.1em;
+}
+.action-btn.w-full { width: 100%; }
+
+/* Specific Button Styles */
+.btn-primary { background-color: var(--primary-color); color: var(--primary-text-color); }
+.btn-primary:hover { background-color: var(--primary-color-darker); }
+.btn-success { background-color: var(--priority-low); color: white; }
+.btn-success:hover { background-color: #059669; } /* Emerald-600 */
+.btn-danger { background-color: var(--priority-high); color: white; }
+.btn-danger:hover { background-color: #dc2626; } /* Red-600 */
+.btn-warning { background-color: var(--priority-medium); color: white; }
+.btn-warning:hover { background-color: #d97706; } /* Amber-600 */
+.btn-info { background-color: #3b82f6; color: white; } /* Blue-500 */
+.btn-info:hover { background-color: #2563eb; } /* Blue-600 */
+.btn-secondary { background-color: var(--divider-color); color: var(--text-muted-color); }
+.btn-secondary:hover { background-color: var(--border-color); filter: brightness(1.05); }
+
+.btn-icon {
+    padding: 0.65rem; /* Square padding */
+    min-width: 48px; /* Ensure square */
+}
+.btn-icon i {
+    margin-right: 0;
+    font-size: 1.3em; /* Larger icon for icon buttons */
+}
+
+/* --- Inputs & Forms --- */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Spacing between form elements */
+    margin-top: 1rem;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr)); /* Default 1 column */
+    gap: 1.5rem;
+}
+@media (min-width: 768px) { /* 2 columns on medium screens and up */
+    .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+label {
+    display: block;
+    font-size: 0.95em;
+    font-weight: 500;
+    color: var(--text-muted-color);
+    margin-bottom: 0.5rem;
+}
+.form-label-secondary { /* For less important labels */
+    font-size: 0.85em;
+    color: var(--text-muted-color);
+    margin-bottom: 0.5rem;
+}
+.form-help-text {
+    font-size: 0.85em;
+    color: var(--text-muted-color);
+    margin-top: 0.5rem;
+}
+
+.input-field, .select-field {
+    width: 100%;
+    background-color: var(--bg-color); /* Match body background */
+    color: var(--text-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1em;
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+.input-field:focus, .select-field:focus {
+    outline: none;
+    border-color: var(--input-focus-ring-color);
+    box-shadow: 0 0 0 3px rgba(var(--rgb-primary-color), 0.2);
+}
+input[readonly].input-field {
+    background-color: var(--divider-color);
+    cursor: default;
+    opacity: 0.8;
+}
+.select-field {
+    appearance: none; /* Remove default arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem; /* Space for arrow */
+}
+body.dark-mode .select-field {
+     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+.input-group .input-field {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none; /* Avoid double border */
+    flex-grow: 1;
+    min-width: 0; /* Prevent input from pushing button out */
+}
+.input-group .input-group-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    /* Match input height more reliably */
+    min-height: calc(1.5em + 1.5rem + 2px); /* Base input height */
+    height: calc(1.5em + 1.5rem + 2px); /* Explicit height */
+    padding: 0.65rem; /* Match btn-icon padding */
+    flex-shrink: 0; /* Prevent button shrinking */
+    border-left: none; /* Prevent double border if input has right border removed */
+}
+/* Adjust if multiple buttons */
+.input-group .input-group-button:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    /* border-right: none; /* If needed */
+}
+
+
+.repeat-options {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+}
+.repeat-day {
+    width: 40px; height: 40px; font-size: 0.9em;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; background-color: var(--divider-color); border: 1px solid transparent;
+    transition: all 0.2s ease; font-weight: 500;
+}
+.repeat-day.selected {
+    background-color: var(--primary-color); color: var(--primary-text-color);
+    font-weight: 700; transform: scale(1.05);
+}
+
+/* --- Task Lists --- */
+.task-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 1rem; /* Space between items */
+}
+.task-item {
+    background-color: var(--card-bg-color);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    /* --- CHANGE: Thicker priority border --- */
+    border-left-width: 8px; /* Increased from 6px */
+    transition: box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items top */
+    gap: 0.75rem;
+}
+.task-item:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+.task-item-content {
+    flex-grow: 1;
+    overflow: hidden; /* Prevent long text breaking layout */
+}
+.task-description {
+    font-size: 1.15em; /* Larger description */
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+    word-break: break-word; /* Wrap long descriptions */
+    /* --- Optional: Add ellipsis for overflow if needed --- */
+    /* white-space: nowrap; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+}
+.task-details {
+    font-size: 0.9em;
+    color: var(--text-muted-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+.task-details i {
+    opacity: 0.75;
+}
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    align-items: center; /* Align buttons vertically */
+}
+.task-actions .action-btn {
+    padding: 0.5rem; /* Smaller padding for task buttons */
+    min-width: 36px; min-height: 36px; /* Smaller buttons */
+}
+.task-actions .action-btn i {
+    font-size: 1em; /* Smaller icons */
+    margin-right: 0;
+}
+
+/* Completed/Deleted Task Styling */
+#completedList .task-description,
+#deletedList .task-description {
+    /* Add specific styling if needed, e.g., line-through */
+}
+#completedList .task-description {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.no-tasks-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.no-tasks-message i {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--priority-high);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading-text {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted-color);
+}
+
+
+
+/* --- Calendar --- */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--divider-color);
+}
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* --- CHANGE: Prevent button shifting --- */
+    flex-shrink: 0; /* Prevent nav from shrinking */
+}
+.calendar-month-year {
+    font-size: 1.25em;
+    font-weight: 600;
+    text-align: center;
+    min-width: 180px; /* Prevent jumping */
+    /* --- CHANGE: Prevent button shifting --- */
+    flex-grow: 1; /* Allow month/year to take space */
+    margin: 0 0.5rem; /* Add some margin */
+}
+/* Ensure buttons have fixed width or don't shrink */
+.calendar-nav .action-btn-icon {
+    flex-shrink: 0;
+}
+
+.calendar-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-muted-color);
+    text-align: center;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem; /* Gap between days */
+    width: 100%; /* Ensure grid takes full width */
+}
+.calendar-day {
+    transition: all var(--transition-speed) var(--transition-func);
+    cursor: pointer;
+    border: 1px solid var(--divider-color);
+    border-radius: 0.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    min-height: 90px; /* Taller for better visibility */
+    aspect-ratio: 1 / 1; /* Maintain square aspect ratio */
+    overflow: hidden; /* Prevent content overflow */
+}
+.calendar-day:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: var(--calendar-hover-bg);
+}
+.calendar-day.has-tasks .day-number { font-weight: 700; }
+.calendar-day.today .day-number {
+    background-color: var(--calendar-today-bg);
+    color: var(--calendar-today-text);
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+.day-number {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.task-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    margin-top: auto;
+    padding-top: 0.5rem;
+}
+.task-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    /* --- CHANGE: Add priority colors --- */
+    border: 1px solid rgba(0,0,0,0.1); /* Optional border */
+}
+.task-indicator.priority-high { background-color: var(--priority-high); }
+.task-indicator.priority-medium { background-color: var(--priority-medium); }
+.task-indicator.priority-low { background-color: var(--priority-low); }
+/* --- CHANGE: Style for 'more' indicator --- */
+.task-indicator.more {
+    background-color: var(--text-muted-color);
+    width: auto; height: auto;
+    font-size: 0.7rem;
+    padding: 0 3px;
+    line-height: 1.2;
+    color: var(--bg-color); /* Use background color for text */
+    border: none; /* Remove border for 'more' */
+}
+
+/* Picker Calendar Specific Styles */
+.picker-grid .calendar-day { /* Styles specific to date picker calendar */
+    min-height: 48px; /* Shorter days for picker */
+    padding: 0.5rem;
+    aspect-ratio: unset; /* Remove aspect ratio for picker */
+}
+.picker-grid .day-number {
+    font-size: 1em;
+    margin-bottom: 0;
+}
+.picker-grid .task-indicators { display: none; } /* Hide task dots in picker */
+
+/* --- Modals --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex; /* Changed from none to flex */
+    justify-content: center;
+    align-items: center;
+    background-color: var(--modal-bg-overlay);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed) var(--transition-func),
+                visibility 0s linear var(--transition-speed);
+}
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+.modal-content {
+    background: var(--modal-content-bg);
+    color: var(--modal-content-text);
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 550px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    transform: scale(0.95);
+    transition: transform var(--transition-speed) var(--transition-func);
+}
+.modal.active .modal-content { transform: scale(1); }
+
+.modal-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--text-color);
+}
+.modal-actions {
+    display: flex;
+    justify-content: center; /* Center buttons by default */
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--divider-color);
+}
+.modal-alert .modal-content { text-align: center; }
+.alert-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+.alert-message { font-size: 1.3em; font-weight: 500; margin-bottom: 0.5rem; }
+.alert-detail { font-size: 1em; color: var(--text-muted-color); margin-bottom: 1.5rem; }
+
+.modal-confirm .modal-content { text-align: center; }
+.confirm-text { font-size: 1.1em; margin: 1.5rem 0; line-height: 1.6; }
+
+/* Time Picker Specific */
+.time-picker { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.time-display { font-size: 3em; font-weight: 700; margin-bottom: 1rem; padding: 0.5rem 1rem; background-color: var(--bg-color); border-radius: 0.5rem; border: 1px solid var(--border-color); min-width: 200px; text-align: center;}
+.time-controls { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+.time-control-group { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.time-label { font-size: 0.9em; font-weight: 500; color: var(--text-muted-color); }
+.time-btn { width: 4rem; height: 4rem; font-size: 1.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg-color); color: var(--text-color); border: 1px solid var(--border-color); cursor: pointer; box-shadow: var(--shadow-sm); }
+.time-btn:hover { background-color: var(--divider-color); }
+.time-period { font-size: 1.2em; font-weight: 600; }
+
+/* Settings Modal Specific */
+.settings-modal .modal-content {
+    max-width: 600px; /* Wider settings modal */
+}
+.settings-option { padding: 1.25rem 0; border-bottom: 1px solid var(--divider-color); }
+.settings-option:last-child { border-bottom: none; }
+.settings-option h3 { font-size: 1.2em; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.settings-option h3 i { opacity: 0.7; }
+.settings-control { margin-bottom: 1rem; }
+.settings-control:last-child { margin-bottom: 0; }
+.color-theme-selector { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+.color-theme-button { width: 2.5rem; height: 2.5rem; border-radius: 50%; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 2px solid transparent; }
+.color-theme-button:hover { transform: scale(1.1); }
+.color-theme-button.selected { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(var(--rgb-primary-color), 0.3); transform: scale(1.1); }
+
+/* --- Walkthrough --- */
+.walkthrough-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    background-color: rgba(0, 0, 0, 0.75);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed) ease, visibility 0s linear var(--transition-speed);
+}
+.walkthrough-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+.walkthrough-tooltip {
+    position: fixed;
+    z-index: 1061;
+    background: var(--modal-content-bg);
+    color: var(--modal-content-text);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed) ease, visibility 0s linear var(--transition-speed);
+    max-height: 80vh;
+    overflow-y: auto;
+    /* Positioning handled by JS */
+}
+.walkthrough-overlay.active .walkthrough-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.1s; /* Keep delay for opacity */
+}
+.walkthrough-close-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted-color);
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+}
+.walkthrough-close-btn:hover { color: var(--text-color); }
+.walkthrough-title { font-size: 1.4em; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color); }
+.walkthrough-content { font-size: 1em; line-height: 1.6; margin-bottom: 1.5rem; }
+.walkthrough-nav { display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--divider-color); }
+.walkthrough-highlight {
+    /* Style for highlighting target elements during walkthrough */
+    outline: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px rgba(var(--rgb-primary-color), 0.5);
+    border-radius: 4px; /* Optional: match target's radius */
+    transition: outline 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Needed for potential pseudo-elements */
+    z-index: 1062; /* Ensure highlight is above overlay but below tooltip */
+}
+
+/* --- START STT ADDITIONS --- */
+/* Style for the input field when STT is active/flashing */
+.stt-flash-active {
+    /* Example: Bright outline using primary color */
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(var(--rgb-primary-color), 0.5);
+    /* Add transition for smoothness */
+    transition: outline 0.15s ease-out, box-shadow 0.15s ease-out, background-color 0.15s ease-in-out;
+    /* Optional: Subtle background pulse */
+    /* background-color: rgba(var(--rgb-primary-color), 0.05); */
+}
+
+/* Style for the STT status text elements */
+.stt-status-indicator {
+    display: block; /* Ensure it takes its own line */
+    min-height: 1.2em; /* Prevent layout shifts if text appears/disappears */
+    margin-top: 0.25rem; /* space above */
+    font-size: 0.8em; /* Slightly smaller than form-help-text */
+    text-align: right; /* Match alignment if needed */
+    color: var(--text-muted-color); /* Default color */
+    transition: color 0.3s ease;
+}
+
+/* Style for microphone button icon when listening */
+/* Targets the <i> tag inside a button with the 'listening' class */
+button.listening i.fa-microphone {
+  color: var(--priority-high); /* Example: Turn mic red */
+  animation: pulse 1s infinite; /* Apply the pulse animation */
+}
+/* --- END STT ADDITIONS --- */
+
+
+/*-------------------------------------------------------------------*/
+/* 6. Responsive Design
+/*-------------------------------------------------------------------*/
+@media (max-width: 1024px) {
+    body { margin-right: 0; }
+    .sidebar {
+        transform: translateX(100%);
+        width: var(--sidebar-expanded-width); /* Full width when open on mobile */
+        border-left: none;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+    .sidebar.active { transform: translateX(0); }
+    .main-content { padding: var(--mobile-content-padding); margin-right: 0; }
+    .nav-text { display: inline; opacity: 1; } /* Always show text when sidebar open on mobile */
+    .mobile-menu-button { display: inline-flex; } /* Show mobile button */
+}
+
+@media (max-width: 768px) {
+    :root { --content-padding: 1.5rem; --mobile-content-padding: 1rem; }
+    h1 { font-size: 1.8em; } h2 { font-size: 1.5em; } h3 { font-size: 1.25em; }
+    .section-content { padding: 1.5rem; }
+    .modal-content { padding: 1.5rem; }
+    /* .datetime-display { font-size: 1.4em; } */ /* Removed as element not found */
+    .task-description { font-size: 1.1em; }
+    .task-details { font-size: 0.85em; }
+    .action-btn { min-height: 44px; padding: 0.5rem 1rem; font-size: 0.95em;}
+    .btn-icon { min-width: 44px; padding: 0.5rem; }
+    .btn-icon i { font-size: 1.1em; }
+    .calendar-grid { gap: 0.35rem; }
+    .calendar-day { min-height: auto; padding: 0.5rem 0.25rem; } /* Removed fixed height, adjust padding */
+    .day-number { font-size: 1em; }
+    .task-indicator { width: 6px; height: 6px; }
+    .time-display { font-size: 2.5em; }
+    .time-btn { width: 3.5rem; height: 3.5rem; font-size: 1.5rem; }
+    .settings-option h3 { font-size: 1.1em; }
+    .color-theme-button { width: 2.25rem; height: 2.25rem; }
+    .walkthrough-tooltip { padding: 1.25rem; }
+    .walkthrough-title { font-size: 1.2em; }
+    .walkthrough-content { font-size: 0.95em; }
+}
+
+@media (max-width: 480px) {
+    :root { --content-padding: 1rem; --mobile-content-padding: 0.75rem; }
+    .section-content { padding: 1rem; border-radius: 0.5rem; }
+    .modal-content { padding: 1rem; }
+    /* .datetime-display { font-size: 1.2em; } */ /* Removed as element not found */
+    .task-description { font-size: 1em; }
+    .task-details { font-size: 0.8em; }
+    .action-btn { min-height: 40px; padding: 0.4rem 0.8rem; font-size: 0.9em;}
+    .btn-icon { min-width: 40px; padding: 0.4rem; }
+    .btn-icon i { font-size: 1em; }
+    .calendar-grid { gap: 0.25rem; }
+    .calendar-day { padding: 0.3rem 0.15rem; } /* Further adjust padding */
+    .day-number { font-size: 0.9em; }
+    .time-display { font-size: 2em; }
+    .time-controls { gap: 0.75rem; }
+    .time-btn { width: 3rem; height: 3rem; font-size: 1.25rem; }
+    .repeat-day { width: 34px; height: 34px; font-size: 0.85rem; }
+    .color-theme-button { width: 2rem; height: 2rem; }
+}
+
+/* High Contrast specific overrides */
+body.high-contrast .task-item {
+    border: 2px solid #000 !important; /* Thicker border for tasks, ensure override */
+    border-left-width: 8px !important; /* Ensure priority border thickness */
+}
+body.high-contrast .action-btn,
+body.high-contrast .time-btn,
+body.high-contrast .repeat-day,
+body.high-contrast .color-theme-button {
+    border: 2px solid #000 !important; /* Ensure buttons have borders */
+}
+body.high-contrast .color-theme-button.selected {
+    border-color: #0000ff !important; /* Use primary for selected theme */
+}
+body.high-contrast .task-indicator { border: 1px solid #000; } /* Add border to dots */
+body.high-contrast .walkthrough-highlight {
+    outline-color: #0000ff; /* Use high-contrast primary */
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.5);
+}
+
+/* Ensure priority colors apply correctly */
+.task-item.priority-high { border-left-color: var(--priority-high); }
+.task-item.priority-medium { border-left-color: var(--priority-medium); }
+.task-item.priority-low { border-left-color: var(--priority-low); }
+
+/* Add styles for upcoming task filters/buttons if needed */
+.upcoming-task-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Add styles for custom modal alerts */
+.modal-alert-custom .modal-content {
+    border: 2px solid var(--priority-high); /* Example for error */
+}
+
+
+/* --- START ANIMATIONS --- */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15); /* Slightly bigger pulse */
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* --- END ANIMATIONS --- */
