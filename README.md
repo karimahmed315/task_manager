@@ -80,7 +80,7 @@ These instructions assume setup on a Raspberry Pi 4 with Raspberry Pi OS (or a s
     ```bash
     python app.py
     ```
-    The server will start, typically accessible at `http://[Your-Pi-IP-Address]:5000` or `http://localhost:5000` if running locally.
+    The server will start, typically accessible at `http://[Your-Pi-IP-Address]:5000` or `http://localhost:5000` if running locally (can also be run on index.html).
 4.  **Access the Interface:**
     * Open a web browser (like Chromium on the Pi) and navigate to the address where the Flask app is running.
     * For STT functionality using the Web Speech API, ensure you are using a compatible browser (like Chrome/Edge) and have an active internet connection. Grant microphone permissions when prompted.
