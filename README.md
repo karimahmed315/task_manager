@@ -2,7 +2,7 @@
 
 ManageMe is an assistive technology project designed to help elderly individuals manage their daily tasks and schedules more effectively. The system aims to provide an accessible interface combining visual elements with voice interaction.
 
-This repository contains the code for the final year individual project dissertation by Karim Ahmed (karimahmed315).
+This repository contains the code for the final year individual project dissertation by Karim Abdou (karimahmed315).
 
 ## Current Status & Features (As of May 2025)
 
