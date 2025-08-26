@@ -1,0 +1,10 @@
+task_id,task_description,dependency,owner,est_hours,status
+T1-01,Setup React project with Firebase SDK integration,,Frontend/Backend,16,open
+T1-02,Implement Firebase email/password authentication,T1-01,Backend,24,open
+T1-03,Design Firestore schema (users + tasks subcollection),T1-01,Backend,12,open
+T1-04,Core task management component (add/edit/list tasks),T1-02;T1-03,Frontend,40,open
+T1-05,Main dashboard with Simple UI default and Advanced UI toggle,T1-04,Frontend/Designer,32,open
+T1-06,Develop Advanced UI view with dense task list and calendar,T1-05,Frontend,40,open
+T1-07,Create 'The Manager' AI chat window (mock responses),T1-06,Frontend,16,open
+T1-08,Build premium paywall UI T1-05,Frontend/PM,12,open
+T1-09,Add 'Coming Soon' hardware placeholders in Advanced UI,T1-06,Designer,8,open
