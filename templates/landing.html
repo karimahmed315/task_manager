@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ManageMe – Organize Life Effortlessly</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/fonts/fontawesome/css/all.css" />
+</head>
+<body class="landing-body">
+  <header class="marketing-header">
+    <a class="logo" href="/" aria-label="ManageMe Home"><i class="fas fa-tasks" aria-hidden="true"></i> <span>ManageMe</span></a>
+    <nav aria-label="Primary">
+      <a href="/features">Features</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <a href="/login" class="login-link" aria-label="Login or Register">Login</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="heroHeading">
+      <div class="badge" aria-label="30 Day Free Trial">NEW – 30 Day Free Trial</div>
+  <h1 id="heroHeading" class="gradient-text hero-heading">Your Voice‑Driven AI Task Copilot</h1>
+  <p class="hero-sub">Speak naturally to add, complete, snooze or reschedule tasks. The built‑in AI can free up your schedule automatically—moving low‑priority items so you regain focus time. Real‑time alerts, smart calendar, total privacy.</p>
+      <div class="cta-row" role="group" aria-label="Primary Calls To Action">
+        <button id="launchAppBtn" class="btn-primary"><i class="fas fa-user" aria-hidden="true"></i> Login / Register</button>
+        <button id="startTrialBtn" class="btn-secondary"><i class="fas fa-gift" aria-hidden="true"></i> Start Free Trial</button>
+      </div>
+    </section>
+    <section id="features" class="features" aria-label="Key Features">
+      <article class="card"><div class="pulse" aria-hidden="true"></div><h3><i class="fas fa-microphone" aria-hidden="true"></i> Voice & NLP Input</h3><p>Say “Remind me tomorrow at 9 AM to call the clinic” — parsed instantly.</p></article>
+      <article class="card"><h3><i class="fas fa-bell" aria-hidden="true"></i> Real-Time Alerts</h3><p>Precise reminders & snooze options that respect your flow.</p></article>
+      <article class="card"><h3><i class="fas fa-repeat" aria-hidden="true"></i> Powerful Repeats</h3><p>Weekdays, weekends, custom days, natural phrases.</p></article>
+      <article class="card"><h3><i class="fas fa-calendar-alt" aria-hidden="true"></i> Smart Calendar</h3><p>Fast month/day switching + “Free Up Schedule”.</p></article>
+  <article class="card"><h3><i class="fas fa-robot" aria-hidden="true"></i> AI Copilot</h3><p>Conversational control + auto “Free Up Day” optimization.</p></article>
+      <article class="card"><h3><i class="fas fa-user-shield" aria-hidden="true"></i> Privacy First</h3><p>Local data storage; export anytime.</p></article>
+    </section>
+    <section id="pricing" class="price-box" aria-label="Pricing">
+      <h2 class="visually-hidden">Pricing</h2>
+      <h3>Simple Pricing</h3>
+      <p class="price-value" aria-label="Five pounds per month after trial">£5 <span>/ month after trial</span></p>
+      <p class="price-sub">Enjoy all features free for 30 days. Cancel anytime in the customer portal.</p>
+      <div class="price-cta">
+        <button id="subscribeBtn" class="btn-primary"><i class="fas fa-lock-open" aria-hidden="true"></i> Subscribe Now</button>
+        <button id="manageBillingBtn" class="btn-secondary"><i class="fas fa-credit-card" aria-hidden="true"></i> Manage Billing</button>
+      </div>
+      <div class="foot-note">Secure payments by Stripe. VAT may apply.</div>
+    </section>
+  </main>
+  <footer class="site-footer" id="about">
+    &copy; <span id="year"></span> ManageMe. Built for clarity and calm productivity.
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const navLinks = document.querySelectorAll('header nav a');
+    navLinks.forEach(l=>{ if(l.getAttribute('href') === window.location.pathname) l.classList.add('active'); });
+    document.getElementById('launchAppBtn').addEventListener('click', ()=>{ window.location.href='/login'; });
+    document.getElementById('startTrialBtn').addEventListener('click', ()=>{ window.location.href='/login'; });
+    document.getElementById('subscribeBtn').addEventListener('click', async ()=>{
+      try { const r = await fetch('/api/create-checkout-session',{method:'POST'}); const d = await r.json(); if(!r.ok) throw new Error(d.error||'Failed'); if(d.id){ window.location.href='https://checkout.stripe.com/c/'+d.id; } } catch(e){ alert('Subscription error: '+ e.message);} });
+    document.getElementById('manageBillingBtn').addEventListener('click', async ()=>{
+      try { const r = await fetch('/api/create-portal-session',{method:'POST'}); const d = await r.json(); if(!r.ok) throw new Error(d.error||'Failed'); if(d.url) window.location.href=d.url; } catch(e){ alert('Portal error: '+ e.message);} });
+  </script>
+</body>
+</html>

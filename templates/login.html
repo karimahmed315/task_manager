@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login – ManageMe</title>
+<link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/fonts/fontawesome/css/all.css">
+<style>body{display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#ecfdf5,#e0f2fe);} .panel{background:#fff;max-width:400px;width:100%;padding:2.25rem 2rem;border-radius:1.25rem;box-shadow:0 12px 34px -10px rgba(0,0,0,.15);} .brand{display:flex;align-items:center;gap:.6rem;margin-bottom:1.25rem;} .brand i{font-size:1.9rem;color:#047857;} h1{font-size:1.4rem;margin:0;font-weight:700;color:#065f46;} label{font-size:.75rem;font-weight:600;color:#065f46;letter-spacing:.5px;} input{margin-top:.25rem;} .actions{display:flex;gap:.75rem;margin-top:1.25rem;} .link-bar{display:flex;justify-content:space-between;margin-top:1rem;font-size:.7rem;} a{text-decoration:none;color:#047857;font-weight:600;} a:hover{text-decoration:underline;} .full-btn{width:100%;margin-top:.75rem;} .msg{font-size:.7rem;margin-top:.75rem;min-height:1rem;} </style>
+</head><body>
+<div class="panel">
+ <div class="brand"><i class="fas fa-tasks"></i><h1>ManageMe</h1></div>
+ <form id="loginForm">
+   <div class="mb-4"><label for="email">Email</label><input id="email" type="email" class="input-field w-full" required autocomplete="username"></div>
+   <div class="mb-4"><label for="password">Password</label><input id="password" type="password" class="input-field w-full" required autocomplete="current-password"></div>
+   <div class="actions"><button id="loginBtnAuth" type="submit" class="action-btn btn-primary flex-1">Login</button><button id="registerBtnAuth" type="button" class="action-btn btn-secondary flex-1">Register</button></div>
+   <button id="backLanding" type="button" class="action-btn btn-secondary full-btn"><i class="fas fa-arrow-left mr-1"></i> Back</button>
+   <div id="authMsg" class="msg"></div>
+ </form>
+ <div class="link-bar"><a href="/features">Features</a><a href="/pricing">Pricing</a><a href="/about">About</a><a href="/contact">Contact</a></div>
+</div>
+<script>
+async function auth(path, body){
+  const msg = document.getElementById('authMsg'); msg.textContent='';
+  try{const r = await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); const d = await r.json(); if(!r.ok) throw new Error(d.error||'Failed'); msg.style.color='#047857'; msg.textContent='Success'; setTimeout(()=> window.location.href='/',600);}catch(e){ msg.style.color='#dc2626'; msg.textContent=e.message; }
+}
+loginForm.addEventListener('submit',e=>{e.preventDefault(); auth('/api/login',{email:email.value.trim(),password:password.value});});
+registerBtnAuth.addEventListener('click',()=> auth('/api/register',{email:email.value.trim(),password:password.value}));
+backLanding.addEventListener('click',()=>{ window.location.href='/'; });
+</script>
+</body></html>
